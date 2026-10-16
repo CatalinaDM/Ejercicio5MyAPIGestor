@@ -1,6 +1,8 @@
 package com.mx.cbtis.gestor.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mx.cbtis.gestor.modelo.Proyectos;
+import com.mx.cbtis.gestor.exception.ReferenciaInvalidaException;
+import com.mx.cbtis.gestor.service.IntegridadService;
 import com.mx.cbtis.gestor.repository.ProtectosRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,9 @@ class ProyectosControllerTest {
 
     @MockBean
     private ProtectosRepository repository;
+
+    @MockBean
+    private IntegridadService integridad;
 
     @Test
     void buscarProyectoDevuelveElEncontrado() throws Exception {
@@ -67,7 +74,7 @@ class ProyectosControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
-        verify(repository).delete(any(Proyectos.class));
+        verify(integridad).eliminarProyecto(7);
     }
 
     @Test

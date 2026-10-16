@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mx.cbtis.gestor.service.IntegridadService;
+
 import com.mx.cbtis.gestor.modelo.Proyectos;
 import com.mx.cbtis.gestor.repository.ProtectosRepository;
 
 @RestController
 public class ProyectosController {
+	
+	@Autowired
+	IntegridadService integridad;
 	
 	@Autowired 
 	ProtectosRepository proyectostable;
@@ -75,7 +80,7 @@ public class ProyectosController {
 		
 		int flag = 0;
 		if(!proyecto.equals(null)) {
-			proyectostable.delete(proyecto);
+			integridad.eliminarProyecto(proyecto.getId_proyecto());
 			flag = 1;
 		}
 		

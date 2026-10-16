@@ -15,5 +15,7 @@ public interface UsuarioRepository extends CrudRepository<Usuario,Integer> {
 			+ " and contrasena = :contrasena", nativeQuery = true)
 	Optional <Usuario> findByCorreoPass(@Param("correo_electronico") String correo_electronico,
 			@Param("contrasena") String contrasena);
+	
+	boolean existsByNombre(String nombre);
                 
 }

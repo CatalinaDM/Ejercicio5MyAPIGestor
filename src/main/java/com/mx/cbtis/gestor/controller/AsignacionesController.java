@@ -12,12 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mx.cbtis.gestor.service.IntegridadService;
+
 import com.mx.cbtis.gestor.modelo.Asignaciones;
 import com.mx.cbtis.gestor.modelo.Tareas;
 import com.mx.cbtis.gestor.repository.AsignacionesRepository;
 
 @RestController
 public class AsignacionesController {
+	
+	@Autowired
+	IntegridadService integridad;
 	
 	@Autowired
 	AsignacionesRepository asignacionestable;
@@ -40,6 +45,8 @@ public class AsignacionesController {
 		int flag = 0;
 		if(!asignacion.equals(null)) {
 			
+			integridad.validarUsuario(asignacion.getId_usuario());
+			integridad.validarTarea(asignacion.getId_tarea());
 			asignacionestable.save(asignacion);
 			flag = 1;
 		}
@@ -52,6 +59,8 @@ public class AsignacionesController {
 		
 		int flag = 0;
 		if(!asignacion.equals(null)) {
+			integridad.validarUsuario(asignacion.getId_usuario());
+			integridad.validarTarea(asignacion.getId_tarea());
 			asignacionestable.save(asignacion);
 			flag = 1;
 		}
