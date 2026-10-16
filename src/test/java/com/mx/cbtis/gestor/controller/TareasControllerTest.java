@@ -1,6 +1,8 @@
 package com.mx.cbtis.gestor.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mx.cbtis.gestor.modelo.Tareas;
+import com.mx.cbtis.gestor.exception.ReferenciaInvalidaException;
+import com.mx.cbtis.gestor.service.IntegridadService;
 import com.mx.cbtis.gestor.repository.TareasRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,9 @@ class TareasControllerTest {
 
     @MockBean
     private TareasRepository repository;
+
+    @MockBean
+    private IntegridadService integridad;
 
     @Test
     void getTareaDevuelveTareasDelProyecto() throws Exception {
@@ -78,7 +85,7 @@ class TareasControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"));
 
-        verify(repository).delete(any(Tareas.class));
+        verify(integridad).eliminarTarea(12);
     }
 
     @Test
@@ -89,5 +96,19 @@ class TareasControllerTest {
         mockMvc.perform(post("/buscarTareas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id_tarea").value(12));
+    }
+
+    @Test
+    void agregarTareaConProyectoInexistenteResponde400SinGuardar() throws Exception {
+        doThrow(new ReferenciaInvalidaException("id_proyecto", "El proyecto 99999 no existe"))
+                .when(integridad).validarProyecto(99999);
+
+        mockMvc.perform(post("/addTareas").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nombre\":\"Tarea X\",\"id_proyecto\":99999}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("REF-INVALIDA"))
+                .andExpect(jsonPath("$.campo").value("id_proyecto"));
+
+        verify(repository, never()).save(any(Tareas.class));
     }
 }

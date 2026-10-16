@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mx.cbtis.gestor.service.IntegridadService;
+
 import com.mx.cbtis.gestor.modelo.Comentarios;
 import com.mx.cbtis.gestor.repository.ComentariosRepository;
 
 @RestController
 public class ComentariosController {
+	
+	@Autowired
+	IntegridadService integridad;
 	
 	@Autowired
 	ComentariosRepository comentariostable;
@@ -45,6 +50,8 @@ public class ComentariosController {
 		
 		int flag = 0;
 		if(!comentario.equals(null)) {
+			integridad.validarTarea(comentario.getId_tarea());
+			integridad.validarUsuarioComentario(comentario.getId_usuario());
 			comentariostable.save(comentario);
 			flag = 1;
 		}
@@ -57,6 +64,8 @@ public class ComentariosController {
 		
 		int flag = 0;
 		if(!comentario.equals(null)) {
+			integridad.validarTarea(comentario.getId_tarea());
+			integridad.validarUsuarioComentario(comentario.getId_usuario());
 			comentariostable.save(comentario);
 			flag = 1;
 		}

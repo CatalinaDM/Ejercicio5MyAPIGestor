@@ -12,12 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mx.cbtis.gestor.service.IntegridadService;
+
 import com.mx.cbtis.gestor.modelo.Tareas;
 import com.mx.cbtis.gestor.modelo.Usuario;
 import com.mx.cbtis.gestor.repository.TareasRepository;
 
 @RestController
 public class TareasController {
+	
+	@Autowired
+	IntegridadService integridad;
 	
 	@Autowired
 	TareasRepository tareastable;
@@ -45,6 +50,7 @@ public class TareasController {
 		
 		int flag = 0;
 		if(!tareas.equals(null)) {
+			integridad.validarProyecto(tareas.getId_proyecto());
 			tareastable.save(tareas);
 			flag = 1;
 		}
@@ -57,6 +63,7 @@ public class TareasController {
 		
 		int flag = 0;
 		if(!tareas.equals(null)) {
+			integridad.validarProyecto(tareas.getId_proyecto());
 			tareastable.save(tareas);
 			flag = 1;
 		}
@@ -69,7 +76,7 @@ public class TareasController {
 		
 		int flag = 0;
 		if(!tareas.equals(null)) {
-			tareastable.delete(tareas);
+			integridad.eliminarTarea(tareas.getId_tarea());
 			flag = 1;
 		}
 		
