@@ -1,0 +1,5 @@
+/target/
+/dump-dbgestor-*.sql
+*.log
+.idea/
+.vscode/
