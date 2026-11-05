@@ -12,6 +12,17 @@ pipeline {
             steps { sh 'mvn -B clean verify' }
             post { always { junit 'target/surefire-reports/*.xml' } }
         }
+        stage('OWASP Dependency-Check') {
+            steps {
+                dependencyCheck(
+                    additionalArguments: '--scan . --format XML --format JSON --out dependency-check-reports',
+                    odcInstallation: 'dependency-check'
+                )
+                dependencyCheckPublisher pattern: 'dependency-check-reports/dependency-check-report.xml'
+                archiveArtifacts artifacts: 'dependency-check-reports/dependency-check-report.json',
+                    fingerprint: true
+            }
+        }
         stage('SonarQube') {
             steps {
                 withSonarQubeEnv('sonarqube') {
