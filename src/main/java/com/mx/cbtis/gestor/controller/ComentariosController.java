@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +18,14 @@ import com.mx.cbtis.gestor.repository.ComentariosRepository;
 
 @RestController
 public class ComentariosController {
-	
-	@Autowired
-	IntegridadService integridad;
-	
-	@Autowired
-	ComentariosRepository comentariostable;
+	private final IntegridadService integridad;
+	private final ComentariosRepository comentariostable;
+
+	public ComentariosController(IntegridadService integridad, ComentariosRepository comentariostable) {
+		this.integridad = integridad;
+		this.comentariostable = comentariostable;
+	}
+
 	
 	@PostMapping("/getComentario")
 
@@ -49,7 +50,7 @@ public class ComentariosController {
 	public int addComentario(@RequestBody Comentarios comentario) {
 		
 		int flag = 0;
-		if(!comentario.equals(null)) {
+		if(comentario != null) {
 			integridad.validarTarea(comentario.getId_tarea());
 			integridad.validarUsuarioComentario(comentario.getId_usuario());
 			comentariostable.save(comentario);
@@ -63,7 +64,7 @@ public class ComentariosController {
 	public int updateComentario(@RequestBody Comentarios comentario) {
 		
 		int flag = 0;
-		if(!comentario.equals(null)) {
+		if(comentario != null) {
 			integridad.validarTarea(comentario.getId_tarea());
 			integridad.validarUsuarioComentario(comentario.getId_usuario());
 			comentariostable.save(comentario);
@@ -77,7 +78,7 @@ public class ComentariosController {
 	public int deleteComentario(@RequestBody Comentarios comentario) {
 		
 		int flag = 0;
-		if(!comentario.equals(null)) {
+		if(comentario != null) {
 			comentariostable.delete(comentario);
 			flag = 1;
 		}

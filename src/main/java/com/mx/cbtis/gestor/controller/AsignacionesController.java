@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +19,14 @@ import com.mx.cbtis.gestor.repository.AsignacionesRepository;
 
 @RestController
 public class AsignacionesController {
-	
-	@Autowired
-	IntegridadService integridad;
-	
-	@Autowired
-	AsignacionesRepository asignacionestable;
+	private final IntegridadService integridad;
+	private final AsignacionesRepository asignacionestable;
+
+	public AsignacionesController(IntegridadService integridad, AsignacionesRepository asignacionestable) {
+		this.integridad = integridad;
+		this.asignacionestable = asignacionestable;
+	}
+
 	
 	@GetMapping("/buscarAsignacion")
 	public Asignaciones getAsignacion(@RequestParam int id) {
@@ -43,7 +44,7 @@ public class AsignacionesController {
 	public int addAsignacion(@RequestBody Asignaciones asignacion) {
 		
 		int flag = 0;
-		if(!asignacion.equals(null)) {
+		if(asignacion != null) {
 			
 			integridad.validarUsuario(asignacion.getId_usuario());
 			integridad.validarTarea(asignacion.getId_tarea());
@@ -58,7 +59,7 @@ public class AsignacionesController {
 	public int updateAsignacion(@RequestBody Asignaciones asignacion) {
 		
 		int flag = 0;
-		if(!asignacion.equals(null)) {
+		if(asignacion != null) {
 			integridad.validarUsuario(asignacion.getId_usuario());
 			integridad.validarTarea(asignacion.getId_tarea());
 			asignacionestable.save(asignacion);
@@ -72,7 +73,7 @@ public class AsignacionesController {
 	public int deleteAsignacion(@RequestBody Asignaciones asignacion) {
 		
 		int flag = 0;
-		if(!asignacion.equals(null)) {
+		if(asignacion != null) {
 			asignacionestable.delete(asignacion);
 			flag = 1;
 		}
