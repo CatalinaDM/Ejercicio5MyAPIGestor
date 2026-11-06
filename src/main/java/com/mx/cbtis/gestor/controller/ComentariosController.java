@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.service.IntegridadService;
 
+import com.mx.cbtis.gestor.dto.ComentarioDto;
 import com.mx.cbtis.gestor.modelo.Comentarios;
 import com.mx.cbtis.gestor.repository.ComentariosRepository;
 
@@ -29,7 +30,7 @@ public class ComentariosController {
 	
 	@PostMapping("/getComentario")
 
-	public List<Comentarios> getComentario(@RequestBody Comentarios idComentario){
+	public List<Comentarios> getComentario(@RequestBody ComentarioDto idComentario){
 		List<Comentarios> listaComentarios = comentariostable.findByTarea(idComentario.getId_tarea());
 		return listaComentarios;
 	}
@@ -47,13 +48,13 @@ public class ComentariosController {
 	}
 	
 	@PostMapping("/addComentario")
-	public int addComentario(@RequestBody Comentarios comentario) {
+	public int addComentario(@RequestBody ComentarioDto comentario) {
 		
 		int flag = 0;
 		if(comentario != null) {
 			integridad.validarTarea(comentario.getId_tarea());
 			integridad.validarUsuarioComentario(comentario.getId_usuario());
-			comentariostable.save(comentario);
+			comentariostable.save(comentario.toEntity());
 			flag = 1;
 		}
 		
@@ -61,13 +62,13 @@ public class ComentariosController {
 	}
 	
 	@PostMapping("/updateComentario")
-	public int updateComentario(@RequestBody Comentarios comentario) {
+	public int updateComentario(@RequestBody ComentarioDto comentario) {
 		
 		int flag = 0;
 		if(comentario != null) {
 			integridad.validarTarea(comentario.getId_tarea());
 			integridad.validarUsuarioComentario(comentario.getId_usuario());
-			comentariostable.save(comentario);
+			comentariostable.save(comentario.toEntity());
 			flag = 1;
 		}
 		
@@ -75,11 +76,11 @@ public class ComentariosController {
 	}
 	
 	@DeleteMapping("/deleteComentario")
-	public int deleteComentario(@RequestBody Comentarios comentario) {
+	public int deleteComentario(@RequestBody ComentarioDto comentario) {
 		
 		int flag = 0;
 		if(comentario != null) {
-			comentariostable.delete(comentario);
+			comentariostable.delete(comentario.toEntity());
 			flag = 1;
 		}
 		

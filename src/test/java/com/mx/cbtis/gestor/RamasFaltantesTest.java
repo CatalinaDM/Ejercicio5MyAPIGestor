@@ -20,7 +20,7 @@ import com.mx.cbtis.gestor.controller.ProyectosController;
 import com.mx.cbtis.gestor.controller.TareasController;
 import com.mx.cbtis.gestor.controller.UsuarioController;
 import com.mx.cbtis.gestor.exception.ReferenciaInvalidaException;
-import com.mx.cbtis.gestor.modelo.Usuario;
+import com.mx.cbtis.gestor.dto.UsuarioDto;
 import com.mx.cbtis.gestor.repository.AsignacionesRepository;
 import com.mx.cbtis.gestor.repository.ComentariosRepository;
 import com.mx.cbtis.gestor.repository.ProtectosRepository;
@@ -57,7 +57,7 @@ class RamasFaltantesTest {
 	void loginConCredencialesIncorrectasDevuelveMarcador000() {
 		UsuarioRepository usu = mock(UsuarioRepository.class);
 		when(usu.findByCorreoPass("a@b.c", "mala")).thenReturn(Optional.empty());
-		Usuario param = new Usuario();
+		UsuarioDto param = new UsuarioDto();
 		param.setCorreo_electronico("a@b.c");
 		param.setContrasena("mala");
 

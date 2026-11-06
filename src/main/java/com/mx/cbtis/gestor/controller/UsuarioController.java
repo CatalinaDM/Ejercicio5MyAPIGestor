@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mx.cbtis.gestor.dto.UsuarioDto;
 import com.mx.cbtis.gestor.modelo.Usuario;
 import com.mx.cbtis.gestor.repository.UsuarioRepository;
 
@@ -24,7 +25,7 @@ public class UsuarioController {
 
 	
 	@PostMapping("/getUsuarioLogin")
-	public Usuario getUsuarioLogin(@RequestBody Usuario userParam) {
+	public Usuario getUsuarioLogin(@RequestBody UsuarioDto userParam) {
 		
 		Optional<Usuario> optionaluser = usuariotable.findByCorreoPass(
 				userParam.getCorreo_electronico(),
@@ -55,10 +56,10 @@ public class UsuarioController {
 	}
 	
 	@PostMapping("/addUsuario")
-	public int addUsuario(@RequestBody Usuario usuario) {
+	public int addUsuario(@RequestBody UsuarioDto usuario) {
 		int flag = 0;
 		if(usuario != null) {
-			usuariotable.save(usuario);
+			usuariotable.save(usuario.toEntity());
 			flag = 1;
 		}
 		
@@ -66,10 +67,10 @@ public class UsuarioController {
 	}
 	
 	@PostMapping("/updateUsuario")
-	public int updateUsuario(@RequestBody Usuario usuario) {
+	public int updateUsuario(@RequestBody UsuarioDto usuario) {
 		int flag = 0;
 		if(usuario != null) {
-			usuariotable.save(usuario);
+			usuariotable.save(usuario.toEntity());
 			flag = 1;
 		}
 		
@@ -77,10 +78,10 @@ public class UsuarioController {
 	}
 	
 	@DeleteMapping("/deleteUsuario")
-	public int deleteUsuario(@RequestBody Usuario usuario) {
+	public int deleteUsuario(@RequestBody UsuarioDto usuario) {
 		int flag = 0;
 		if(usuario != null) {
-			usuariotable.delete(usuario);
+			usuariotable.delete(usuario.toEntity());
 			flag = 1;
 		}
 		
