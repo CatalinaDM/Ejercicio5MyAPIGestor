@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +19,14 @@ import com.mx.cbtis.gestor.repository.TareasRepository;
 
 @RestController
 public class TareasController {
-	
-	@Autowired
-	IntegridadService integridad;
-	
-	@Autowired
-	TareasRepository tareastable;
+	private final IntegridadService integridad;
+	private final TareasRepository tareastable;
+
+	public TareasController(IntegridadService integridad, TareasRepository tareastable) {
+		this.integridad = integridad;
+		this.tareastable = tareastable;
+	}
+
 	
 	@PostMapping("/getTarea")
 	public List<Tareas> getTarea(@RequestBody Tareas id_proyecto) {
@@ -49,7 +50,7 @@ public class TareasController {
 	public int addTareas(@RequestBody Tareas tareas) {
 		
 		int flag = 0;
-		if(!tareas.equals(null)) {
+		if(tareas != null) {
 			integridad.validarProyecto(tareas.getId_proyecto());
 			tareastable.save(tareas);
 			flag = 1;
@@ -62,7 +63,7 @@ public class TareasController {
 	public int updateTareas(@RequestBody Tareas tareas) {
 		
 		int flag = 0;
-		if(!tareas.equals(null)) {
+		if(tareas != null) {
 			integridad.validarProyecto(tareas.getId_proyecto());
 			tareastable.save(tareas);
 			flag = 1;
@@ -75,7 +76,7 @@ public class TareasController {
 	public int deleteTareas(@RequestBody Tareas tareas) {
 		
 		int flag = 0;
-		if(!tareas.equals(null)) {
+		if(tareas != null) {
 			integridad.eliminarTarea(tareas.getId_tarea());
 			flag = 1;
 		}

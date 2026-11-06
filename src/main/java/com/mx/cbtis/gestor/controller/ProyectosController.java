@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +18,14 @@ import com.mx.cbtis.gestor.repository.ProtectosRepository;
 
 @RestController
 public class ProyectosController {
-	
-	@Autowired
-	IntegridadService integridad;
-	
-	@Autowired 
-	ProtectosRepository proyectostable;
+	private final IntegridadService integridad;
+	private final ProtectosRepository proyectostable;
+
+	public ProyectosController(IntegridadService integridad, ProtectosRepository proyectostable) {
+		this.integridad = integridad;
+		this.proyectostable = proyectostable;
+	}
+
 	
 	/*@PostMapping("/buscarProyecto")
 	public Proyectos getProyecto(@RequestBody Proyectos proyecto) {
@@ -54,7 +55,7 @@ public class ProyectosController {
 	public int addProyecto(@RequestBody Proyectos proyecto) {
 		
 		int flag = 0;
-		if(!proyecto.equals(null)) {
+		if(proyecto != null) {
 			
 			proyectostable.save(proyecto);
 			flag = 1;
@@ -67,7 +68,7 @@ public class ProyectosController {
 	public int updateProyecto(@RequestBody Proyectos proyecto) {
 		
 		int flag = 0;
-		if(!proyecto.equals(null)) {
+		if(proyecto != null) {
 			proyectostable.save(proyecto);
 			flag = 1;
 		}
@@ -79,7 +80,7 @@ public class ProyectosController {
 	public int deleteProyecto(@RequestBody Proyectos proyecto) {
 		
 		int flag = 0;
-		if(!proyecto.equals(null)) {
+		if(proyecto != null) {
 			integridad.eliminarProyecto(proyecto.getId_proyecto());
 			flag = 1;
 		}

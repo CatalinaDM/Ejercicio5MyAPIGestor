@@ -1,6 +1,5 @@
 package com.mx.cbtis.gestor.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,21 +18,19 @@ import com.mx.cbtis.gestor.repository.UsuarioRepository;
  */
 @Service
 public class IntegridadService {
+	private final ProtectosRepository proyectostable;
+	private final TareasRepository tareastable;
+	private final UsuarioRepository usuariotable;
+	private final ComentariosRepository comentariostable;
+	private final AsignacionesRepository asignacionestable;
 
-	@Autowired
-	ProtectosRepository proyectostable;
-
-	@Autowired
-	TareasRepository tareastable;
-
-	@Autowired
-	UsuarioRepository usuariotable;
-
-	@Autowired
-	ComentariosRepository comentariostable;
-
-	@Autowired
-	AsignacionesRepository asignacionestable;
+	public IntegridadService(ProtectosRepository proyectostable, TareasRepository tareastable, UsuarioRepository usuariotable, ComentariosRepository comentariostable, AsignacionesRepository asignacionestable) {
+		this.proyectostable = proyectostable;
+		this.tareastable = tareastable;
+		this.usuariotable = usuariotable;
+		this.comentariostable = comentariostable;
+		this.asignacionestable = asignacionestable;
+	}
 
 	public void validarProyecto(Integer idProyecto) {
 		if (idProyecto == null || !proyectostable.existsById(idProyecto)) {
