@@ -31,7 +31,7 @@ public class TareasController {
 	
 	@PostMapping("/getTarea")
 	public List<Tareas> getTarea(@RequestBody TareaDto id_proyecto) {
-		List<Tareas> listaTareas = tareastable.findByIdProyecto(id_proyecto.getId_proyecto());
+		List<Tareas> listaTareas = tareastable.findByIdProyecto(id_proyecto.id_proyecto());
 		return listaTareas;
 	}
 	
@@ -52,7 +52,7 @@ public class TareasController {
 		
 		int flag = 0;
 		if(tareas != null) {
-			integridad.validarProyecto(tareas.getId_proyecto());
+			integridad.validarProyecto(tareas.id_proyecto());
 			tareastable.save(tareas.toEntity());
 			flag = 1;
 		}
@@ -65,7 +65,7 @@ public class TareasController {
 		
 		int flag = 0;
 		if(tareas != null) {
-			integridad.validarProyecto(tareas.getId_proyecto());
+			integridad.validarProyecto(tareas.id_proyecto());
 			tareastable.save(tareas.toEntity());
 			flag = 1;
 		}
@@ -78,7 +78,7 @@ public class TareasController {
 		
 		int flag = 0;
 		if(tareas != null) {
-			integridad.eliminarTarea(tareas.getId_tarea());
+			integridad.eliminarTarea(tareas.id_tarea());
 			flag = 1;
 		}
 		

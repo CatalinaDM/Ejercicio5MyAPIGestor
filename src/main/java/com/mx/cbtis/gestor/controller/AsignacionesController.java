@@ -47,8 +47,8 @@ public class AsignacionesController {
 		int flag = 0;
 		if(asignacion != null) {
 			
-			integridad.validarUsuario(asignacion.getId_usuario());
-			integridad.validarTarea(asignacion.getId_tarea());
+			integridad.validarUsuario(asignacion.id_usuario());
+			integridad.validarTarea(asignacion.id_tarea());
 			asignacionestable.save(asignacion.toEntity());
 			flag = 1;
 		}
@@ -61,8 +61,8 @@ public class AsignacionesController {
 		
 		int flag = 0;
 		if(asignacion != null) {
-			integridad.validarUsuario(asignacion.getId_usuario());
-			integridad.validarTarea(asignacion.getId_tarea());
+			integridad.validarUsuario(asignacion.id_usuario());
+			integridad.validarTarea(asignacion.id_tarea());
 			asignacionestable.save(asignacion.toEntity());
 			flag = 1;
 		}

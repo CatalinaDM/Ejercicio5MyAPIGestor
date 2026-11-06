@@ -28,8 +28,8 @@ public class UsuarioController {
 	public Usuario getUsuarioLogin(@RequestBody UsuarioDto userParam) {
 		
 		Optional<Usuario> optionaluser = usuariotable.findByCorreoPass(
-				userParam.getCorreo_electronico(),
-				userParam.getContrasena());
+				userParam.correo_electronico(),
+				userParam.contrasena());
 		
 		Usuario user = new Usuario();
 		

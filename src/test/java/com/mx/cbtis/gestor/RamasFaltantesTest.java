@@ -57,9 +57,7 @@ class RamasFaltantesTest {
 	void loginConCredencialesIncorrectasDevuelveMarcador000() {
 		UsuarioRepository usu = mock(UsuarioRepository.class);
 		when(usu.findByCorreoPass("a@b.c", "mala")).thenReturn(Optional.empty());
-		UsuarioDto param = new UsuarioDto();
-		param.setCorreo_electronico("a@b.c");
-		param.setContrasena("mala");
+		UsuarioDto param = new UsuarioDto(null, null, "a@b.c", "mala", null, null);
 
 		assertEquals("000", new UsuarioController(usu).getUsuarioLogin(param).getNombre());
 	}
