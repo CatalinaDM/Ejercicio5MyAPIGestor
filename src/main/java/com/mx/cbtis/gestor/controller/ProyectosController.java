@@ -32,7 +32,7 @@ public class ProyectosController {
 	public Proyectos getProyecto(@RequestBody ProyectoDto proyecto) {
 		
 		Proyectos buscar = new Proyectos();
-		Optional<Proyectos> proyectos = proyectostable.findById(proyecto.getId_proyecto());
+		Optional<Proyectos> proyectos = proyectostable.findById(proyecto.id_proyecto());
 		if(proyectos.isPresent()) {
 			buscar = proyectos.get();
 		}
@@ -82,7 +82,7 @@ public class ProyectosController {
 		
 		int flag = 0;
 		if(proyecto != null) {
-			integridad.eliminarProyecto(proyecto.getId_proyecto());
+			integridad.eliminarProyecto(proyecto.id_proyecto());
 			flag = 1;
 		}
 		

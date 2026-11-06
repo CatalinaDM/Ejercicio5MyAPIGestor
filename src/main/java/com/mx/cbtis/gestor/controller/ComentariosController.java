@@ -31,7 +31,7 @@ public class ComentariosController {
 	@PostMapping("/getComentario")
 
 	public List<Comentarios> getComentario(@RequestBody ComentarioDto idComentario){
-		List<Comentarios> listaComentarios = comentariostable.findByTarea(idComentario.getId_tarea());
+		List<Comentarios> listaComentarios = comentariostable.findByTarea(idComentario.id_tarea());
 		return listaComentarios;
 	}
 	
@@ -52,8 +52,8 @@ public class ComentariosController {
 		
 		int flag = 0;
 		if(comentario != null) {
-			integridad.validarTarea(comentario.getId_tarea());
-			integridad.validarUsuarioComentario(comentario.getId_usuario());
+			integridad.validarTarea(comentario.id_tarea());
+			integridad.validarUsuarioComentario(comentario.id_usuario());
 			comentariostable.save(comentario.toEntity());
 			flag = 1;
 		}
@@ -66,8 +66,8 @@ public class ComentariosController {
 		
 		int flag = 0;
 		if(comentario != null) {
-			integridad.validarTarea(comentario.getId_tarea());
-			integridad.validarUsuarioComentario(comentario.getId_usuario());
+			integridad.validarTarea(comentario.id_tarea());
+			integridad.validarUsuarioComentario(comentario.id_usuario());
 			comentariostable.save(comentario.toEntity());
 			flag = 1;
 		}
