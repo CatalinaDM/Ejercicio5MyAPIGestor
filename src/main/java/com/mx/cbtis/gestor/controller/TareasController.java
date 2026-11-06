@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.service.IntegridadService;
 
+import com.mx.cbtis.gestor.dto.TareaDto;
 import com.mx.cbtis.gestor.modelo.Tareas;
 import com.mx.cbtis.gestor.modelo.Usuario;
 import com.mx.cbtis.gestor.repository.TareasRepository;
@@ -29,7 +30,7 @@ public class TareasController {
 
 	
 	@PostMapping("/getTarea")
-	public List<Tareas> getTarea(@RequestBody Tareas id_proyecto) {
+	public List<Tareas> getTarea(@RequestBody TareaDto id_proyecto) {
 		List<Tareas> listaTareas = tareastable.findByIdProyecto(id_proyecto.getId_proyecto());
 		return listaTareas;
 	}
@@ -47,12 +48,12 @@ public class TareasController {
 	}
 	
 	@PostMapping("/addTareas")
-	public int addTareas(@RequestBody Tareas tareas) {
+	public int addTareas(@RequestBody TareaDto tareas) {
 		
 		int flag = 0;
 		if(tareas != null) {
 			integridad.validarProyecto(tareas.getId_proyecto());
-			tareastable.save(tareas);
+			tareastable.save(tareas.toEntity());
 			flag = 1;
 		}
 		
@@ -60,12 +61,12 @@ public class TareasController {
 	}
 	
 	@PostMapping("/updateTareas")
-	public int updateTareas(@RequestBody Tareas tareas) {
+	public int updateTareas(@RequestBody TareaDto tareas) {
 		
 		int flag = 0;
 		if(tareas != null) {
 			integridad.validarProyecto(tareas.getId_proyecto());
-			tareastable.save(tareas);
+			tareastable.save(tareas.toEntity());
 			flag = 1;
 		}
 		
@@ -73,7 +74,7 @@ public class TareasController {
 	}
 	
 	@DeleteMapping("/deleteTareas")
-	public int deleteTareas(@RequestBody Tareas tareas) {
+	public int deleteTareas(@RequestBody TareaDto tareas) {
 		
 		int flag = 0;
 		if(tareas != null) {

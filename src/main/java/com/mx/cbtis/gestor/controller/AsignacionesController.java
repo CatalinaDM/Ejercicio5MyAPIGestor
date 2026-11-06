@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.service.IntegridadService;
 
+import com.mx.cbtis.gestor.dto.AsignacionDto;
 import com.mx.cbtis.gestor.modelo.Asignaciones;
 import com.mx.cbtis.gestor.modelo.Tareas;
 import com.mx.cbtis.gestor.repository.AsignacionesRepository;
@@ -41,14 +42,14 @@ public class AsignacionesController {
 	}
 	
 	@PostMapping("/addAsignacion")
-	public int addAsignacion(@RequestBody Asignaciones asignacion) {
+	public int addAsignacion(@RequestBody AsignacionDto asignacion) {
 		
 		int flag = 0;
 		if(asignacion != null) {
 			
 			integridad.validarUsuario(asignacion.getId_usuario());
 			integridad.validarTarea(asignacion.getId_tarea());
-			asignacionestable.save(asignacion);
+			asignacionestable.save(asignacion.toEntity());
 			flag = 1;
 		}
 		
@@ -56,13 +57,13 @@ public class AsignacionesController {
 	}
 	
 	@PostMapping("/updateAsignacion")
-	public int updateAsignacion(@RequestBody Asignaciones asignacion) {
+	public int updateAsignacion(@RequestBody AsignacionDto asignacion) {
 		
 		int flag = 0;
 		if(asignacion != null) {
 			integridad.validarUsuario(asignacion.getId_usuario());
 			integridad.validarTarea(asignacion.getId_tarea());
-			asignacionestable.save(asignacion);
+			asignacionestable.save(asignacion.toEntity());
 			flag = 1;
 		}
 		
@@ -70,11 +71,11 @@ public class AsignacionesController {
 	}
 	
 	@DeleteMapping("/deleteAsignacion")
-	public int deleteAsignacion(@RequestBody Asignaciones asignacion) {
+	public int deleteAsignacion(@RequestBody AsignacionDto asignacion) {
 		
 		int flag = 0;
 		if(asignacion != null) {
-			asignacionestable.delete(asignacion);
+			asignacionestable.delete(asignacion.toEntity());
 			flag = 1;
 		}
 		

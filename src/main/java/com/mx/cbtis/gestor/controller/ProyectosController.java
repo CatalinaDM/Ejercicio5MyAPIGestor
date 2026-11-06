@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.service.IntegridadService;
 
+import com.mx.cbtis.gestor.dto.ProyectoDto;
 import com.mx.cbtis.gestor.modelo.Proyectos;
 import com.mx.cbtis.gestor.repository.ProtectosRepository;
 
@@ -28,7 +29,7 @@ public class ProyectosController {
 
 	
 	/*@PostMapping("/buscarProyecto")
-	public Proyectos getProyecto(@RequestBody Proyectos proyecto) {
+	public Proyectos getProyecto(@RequestBody ProyectoDto proyecto) {
 		
 		Proyectos buscar = new Proyectos();
 		Optional<Proyectos> proyectos = proyectostable.findById(proyecto.getId_proyecto());
@@ -52,12 +53,12 @@ public class ProyectosController {
 	}
 	
 	@PostMapping("/addProyecto")
-	public int addProyecto(@RequestBody Proyectos proyecto) {
+	public int addProyecto(@RequestBody ProyectoDto proyecto) {
 		
 		int flag = 0;
 		if(proyecto != null) {
 			
-			proyectostable.save(proyecto);
+			proyectostable.save(proyecto.toEntity());
 			flag = 1;
 		}
 		
@@ -65,11 +66,11 @@ public class ProyectosController {
 	}
 	
 	@PostMapping("/updateProyecto")
-	public int updateProyecto(@RequestBody Proyectos proyecto) {
+	public int updateProyecto(@RequestBody ProyectoDto proyecto) {
 		
 		int flag = 0;
 		if(proyecto != null) {
-			proyectostable.save(proyecto);
+			proyectostable.save(proyecto.toEntity());
 			flag = 1;
 		}
 		
@@ -77,7 +78,7 @@ public class ProyectosController {
 	}
 	
 	@DeleteMapping("/deleteProyecto")
-	public int deleteProyecto(@RequestBody Proyectos proyecto) {
+	public int deleteProyecto(@RequestBody ProyectoDto proyecto) {
 		
 		int flag = 0;
 		if(proyecto != null) {

@@ -71,6 +71,12 @@ pipeline {
 
                     RESULTADO_MIGRACION=$?
 
+                    echo "Analizando migracion F04 (llaves foraneas)..."
+
+                    docker run --rm                       -v jenkins_home:/jenkins:ro                       sqlfluff/sqlfluff:latest                       lint --dialect mysql --format json                       /jenkins/workspace/Prueba-SchemaSpy/database/migrations/migracion_f04_llaves_foraneas.sql                       > auditoria/sqlfluff/migracion-f04.json 2>&1
+
+                    RESULTADO_F04=$?
+
                     echo "Analizando estructura de la base de datos..."
 
                     docker run --rm \
@@ -94,13 +100,20 @@ pipeline {
 
                     echo "Codigo migracion: $RESULTADO_MIGRACION"
                     echo "Codigo estructura: $RESULTADO_ESTRUCTURA"
+                    echo "Codigo migracion F04: $RESULTADO_F04"
 
-                    if [ "$RESULTADO_MIGRACION" -eq 2 ] || [ "$RESULTADO_ESTRUCTURA" -eq 2 ]; then
+                    if [ "$RESULTADO_MIGRACION" -ge 2 ] || [ "$RESULTADO_ESTRUCTURA" -ge 2 ] || [ "$RESULTADO_F04" -ge 2 ]; then
                         echo "Error de ejecucion de SQLFluff."
                         exit 1
                     fi
 
-                    echo "Analisis SQLFluff finalizado."
+                    # Umbral de calidad: no se permite ninguna violacion de estilo
+                    if [ "$RESULTADO_MIGRACION" -ne 0 ] || [ "$RESULTADO_ESTRUCTURA" -ne 0 ] || [ "$RESULTADO_F04" -ne 0 ]; then
+                        echo "SQLFluff encontro violaciones: se supera el umbral (0)."
+                        exit 1
+                    fi
+
+                    echo "Analisis SQLFluff finalizado sin violaciones."
                     exit 0
                 '''
             }
@@ -181,6 +194,7 @@ pipeline {
                     test -s auditoria/percona/resumen-servidor.txt
                     test -s auditoria/sqlfluff/migracion.json
                     test -s auditoria/sqlfluff/estructura.json
+                    test -s auditoria/sqlfluff/migracion-f04.json
 
                     echo "Todos los reportes fueron generados."
 

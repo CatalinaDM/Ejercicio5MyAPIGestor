@@ -1,193 +1,134 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- Esquema de la base de datos dbgestor (MariaDB 11.3)
 --
--- Host: localhost    Database: dbgestor
--- ------------------------------------------------------
--- Server version	11.3.2-MariaDB
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
+-- Origen: volcado de mysqldump del 26/06/2024, depurado para el analisis
+-- estatico con SQLFluff (se quitaron las directivas condicionales de
+-- mysqldump y se agregaron las llaves foraneas que faltaban).
 --
--- Table structure for table `asignaciones`
---
+-- Relaciones (integridad referencial):
+--   tareas.id_proyecto      -> proyectos.id_proyecto
+--   asignaciones.id_usuario -> usuario.id_usuario
+--   asignaciones.id_tarea   -> tareas.id_tarea
+--   comentarios.id_tarea    -> tareas.id_tarea
+-- comentarios.id_usuario aun guarda el nombre del usuario; su migracion a
+-- llave foranea esta propuesta en migrations/migracion_f03.sql.
 
-DROP TABLE IF EXISTS `asignaciones`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `asignaciones` (
-  `id_asignacion` int(11) NOT NULL AUTO_INCREMENT,
-  `id_usuario` int(11) DEFAULT NULL,
-  `id_tarea` int(11) DEFAULT NULL,
-  `fecha_asignacion` date DEFAULT NULL,
-  PRIMARY KEY (`id_asignacion`),
-  KEY `asignaciones_usuario_FK` (`id_usuario`),
-  KEY `asignaciones_tareas_FK` (`id_tarea`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS comentarios;
+DROP TABLE IF EXISTS asignaciones;
+DROP TABLE IF EXISTS tareas;
+DROP TABLE IF EXISTS proyectos;
+DROP TABLE IF EXISTS usuario;
+DROP TABLE IF EXISTS hibernate_sequence;
 
---
--- Dumping data for table `asignaciones`
---
+CREATE TABLE usuario (
+    id_usuario INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(100) DEFAULT NULL,
+    correo_electronico VARCHAR(100) DEFAULT NULL,
+    contrasena VARCHAR(100) DEFAULT NULL,
+    rol VARCHAR(100) DEFAULT NULL,
+    imagen_usuario VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (id_usuario)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
-LOCK TABLES `asignaciones` WRITE;
-/*!40000 ALTER TABLE `asignaciones` DISABLE KEYS */;
-/*!40000 ALTER TABLE `asignaciones` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE proyectos (
+    id_proyecto INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(100) DEFAULT NULL,
+    descripcion VARCHAR(100) DEFAULT NULL,
+    fecha_inicio DATE DEFAULT NULL,
+    fecha_finalizacion DATE DEFAULT NULL,
+    estado_proyecto VARCHAR(100) DEFAULT NULL,
+    fondo VARCHAR(100) DEFAULT NULL,
+    PRIMARY KEY (id_proyecto)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
---
--- Table structure for table `comentarios`
---
+CREATE TABLE tareas (
+    id_tarea INT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(100) DEFAULT NULL,
+    descripcion VARCHAR(100) DEFAULT NULL,
+    fecha_vencimiento DATE DEFAULT NULL,
+    estado VARCHAR(255) DEFAULT NULL,
+    lista VARCHAR(255) DEFAULT NULL,
+    id_proyecto INT DEFAULT NULL,
+    PRIMARY KEY (id_tarea),
+    CONSTRAINT fk_tareas_proyectos
+    FOREIGN KEY (id_proyecto) REFERENCES proyectos (id_proyecto)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
-DROP TABLE IF EXISTS `comentarios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `comentarios` (
-  `id_comentario` int(11) NOT NULL AUTO_INCREMENT,
-  `texto_comentario` varchar(250) DEFAULT NULL,
-  `fecha_hora` datetime DEFAULT NULL,
-  `id_usuario` varchar(100) DEFAULT NULL,
-  `id_tarea` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_comentario`)
-) ENGINE=InnoDB AUTO_INCREMENT=203 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE asignaciones (
+    id_asignacion INT NOT NULL AUTO_INCREMENT,
+    id_usuario INT DEFAULT NULL,
+    id_tarea INT DEFAULT NULL,
+    fecha_asignacion DATE DEFAULT NULL,
+    PRIMARY KEY (id_asignacion),
+    CONSTRAINT fk_asignaciones_usuario
+    FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
+    CONSTRAINT fk_asignaciones_tareas
+    FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
---
--- Dumping data for table `comentarios`
---
+CREATE TABLE comentarios (
+    id_comentario INT NOT NULL AUTO_INCREMENT,
+    texto_comentario VARCHAR(250) DEFAULT NULL,
+    fecha_hora DATETIME DEFAULT NULL,
+    id_usuario VARCHAR(100) DEFAULT NULL,
+    id_tarea INT DEFAULT NULL,
+    PRIMARY KEY (id_comentario),
+    CONSTRAINT fk_comentarios_tareas
+    FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea)
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
-LOCK TABLES `comentarios` WRITE;
-/*!40000 ALTER TABLE `comentarios` DISABLE KEYS */;
-INSERT INTO `comentarios` VALUES (201,'Subirlo YA!!!','2024-06-26 13:48:00','Perla Joceline Martínez Meza',199),(202,'hola','2024-06-26 13:49:00','Liliana Gómez Martínez',199);
-/*!40000 ALTER TABLE `comentarios` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE hibernate_sequence (
+    next_val BIGINT DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
---
--- Table structure for table `hibernate_sequence`
---
+-- Datos de ejemplo
+INSERT INTO usuario (
+    id_usuario, nombre, correo_electronico, contrasena, rol, imagen_usuario
+)
+VALUES
+(
+    131, 'Ana Paola Ramírez Vázquez', 'ana22533@cbtis75.edu.mx',
+    '0722', 'Estudiante', '#70FAB7'
+),
+(
+    172, 'Liliana Gómez Martínez', 'liliana22512@cbtis75.edu.mx',
+    'ada', 'Estudiante', '#54EA01'
+),
+(
+    196, 'Perla Joceline Martínez Meza', 'perla22522@cbtis75.edu.mx',
+    '12345', 'Estudiante', '#805611'
+);
 
-DROP TABLE IF EXISTS `hibernate_sequence`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hibernate_sequence` (
-  `next_val` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO proyectos (
+    id_proyecto, nombre, descripcion, fecha_inicio, fecha_finalizacion,
+    estado_proyecto, fondo
+)
+VALUES
+(
+    197, 'My API Rest',
+    'Desarrollaran un Api Rest, que satisfaga un sistema de información con al menos 5 tablas.', -- noqa: LT05
+    '2024-05-31', '2024-06-29', 'En proceso', '/Images/animacion1.gif'
+);
 
---
--- Dumping data for table `hibernate_sequence`
---
+INSERT INTO tareas (
+    id_tarea, nombre, descripcion, fecha_vencimiento, estado, lista,
+    id_proyecto
+)
+VALUES
+(
+    199, 'Base de datos', 'Realizar la estructura de las tablas',
+    '2024-06-13', 'danger', 'terminado', 197
+);
 
-LOCK TABLES `hibernate_sequence` WRITE;
-/*!40000 ALTER TABLE `hibernate_sequence` DISABLE KEYS */;
-INSERT INTO `hibernate_sequence` VALUES (203);
-/*!40000 ALTER TABLE `hibernate_sequence` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO comentarios (
+    id_comentario, texto_comentario, fecha_hora, id_usuario, id_tarea
+)
+VALUES
+(
+    201, 'Subirlo YA!!!', '2024-06-26 13:48:00',
+    'Perla Joceline Martínez Meza', 199
+),
+(
+    202, 'hola', '2024-06-26 13:49:00', 'Liliana Gómez Martínez', 199
+);
 
---
--- Table structure for table `proyectos`
---
-
-DROP TABLE IF EXISTS `proyectos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `proyectos` (
-  `id_proyecto` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) DEFAULT NULL,
-  `descripcion` varchar(100) DEFAULT NULL,
-  `fecha_inicio` date DEFAULT NULL,
-  `fecha_finalizacion` date DEFAULT NULL,
-  `estado_proyecto` varchar(100) DEFAULT NULL,
-  `fondo` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id_proyecto`)
-) ENGINE=InnoDB AUTO_INCREMENT=199 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `proyectos`
---
-
-LOCK TABLES `proyectos` WRITE;
-/*!40000 ALTER TABLE `proyectos` DISABLE KEYS */;
-INSERT INTO `proyectos` VALUES (197,'My API Rest','Desarrollaran un Api Rest, que satisfaga un sistema de información con al menos 5 tablas.','2024-05-31','2024-06-29','En proceso','/Images/animacion1.gif');
-/*!40000 ALTER TABLE `proyectos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tareas`
---
-
-DROP TABLE IF EXISTS `tareas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tareas` (
-  `id_tarea` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) DEFAULT NULL,
-  `descripcion` varchar(100) DEFAULT NULL,
-  `fecha_vencimiento` date DEFAULT NULL,
-  `estado` varchar(255) DEFAULT NULL,
-  `lista` varchar(255) DEFAULT NULL,
-  `id_proyecto` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id_tarea`)
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tareas`
---
-
-LOCK TABLES `tareas` WRITE;
-/*!40000 ALTER TABLE `tareas` DISABLE KEYS */;
-INSERT INTO `tareas` VALUES (199,'Base de datos','Realizar la estructura de las tablas','2024-06-13','danger','terminado',197);
-/*!40000 ALTER TABLE `tareas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `usuario`
---
-
-DROP TABLE IF EXISTS `usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuario` (
-  `id_usuario` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) DEFAULT NULL,
-  `correo_electronico` varchar(100) DEFAULT NULL,
-  `contrasena` varchar(100) DEFAULT NULL,
-  `rol` varchar(100) DEFAULT NULL,
-  `imagen_usuario` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `usuario`
---
-
-LOCK TABLES `usuario` WRITE;
-/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (131,'Ana Paola Ramírez Vázquez','ana22533@cbtis75.edu.mx','0722','Estudiante','#70FAB7'),(172,'Liliana Gómez Martínez','liliana22512@cbtis75.edu.mx','ada','Estudiante','#54EA01'),(196,'Perla Joceline Martínez Meza','perla22522@cbtis75.edu.mx','12345','Estudiante','#805611');
-/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping routines for database 'dbgestor'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-06-26 14:53:44
+INSERT INTO hibernate_sequence (next_val) VALUES (203);
