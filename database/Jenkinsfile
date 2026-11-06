@@ -1,0 +1,217 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Obtener codigo del repositorio') {
+            steps {
+                git branch: 'test',
+                    url: 'https://github.com/CatalinaDM/Ejercicio5MyAPIGestor.git'
+            }
+        }
+
+        stage('Preparar auditoria') {
+            steps {
+                sh '''
+                    mkdir -p auditoria/percona
+                    mkdir -p auditoria/sqlfluff
+                    mkdir -p reporte
+                '''
+            }
+        }
+
+        stage('Verificar archivos SQL') {
+            steps {
+                sh '''
+                    echo "=================================="
+                    echo "VERIFICANDO ARCHIVOS SQL"
+                    echo "=================================="
+
+                    find database -type f -name "*.sql" -print
+
+                    CANTIDAD=$(find database -type f -name "*.sql" | wc -l)
+
+                    echo "Total de archivos SQL: $CANTIDAD"
+
+                    test "$CANTIDAD" -gt 0
+                '''
+            }
+        }
+
+        stage('Analisis estatico SQL con SQLFluff') {
+            steps {
+                sh '''
+                    echo "=================================="
+                    echo "ANALISIS ESTATICO SQLFLUFF"
+                    echo "=================================="
+
+                    set +e
+
+                    rm -f auditoria/sqlfluff/*.json
+
+                    echo "Version de SQLFluff:"
+                    docker run --rm sqlfluff/sqlfluff:latest version
+
+                    echo "Verificando archivos desde el volumen compartido:"
+
+                    docker run --rm \
+                      --entrypoint sh \
+                      -v jenkins_home:/jenkins:ro \
+                      sqlfluff/sqlfluff:latest \
+                      -c 'find /jenkins/workspace/Prueba-SchemaSpy/database -type f -name "*.sql" -print'
+
+                    echo "Analizando migracion F03..."
+
+                    docker run --rm \
+                      -v jenkins_home:/jenkins:ro \
+                      sqlfluff/sqlfluff:latest \
+                      lint --dialect mysql --format json \
+                      /jenkins/workspace/Prueba-SchemaSpy/database/migrations/migracion_f03.sql \
+                      > auditoria/sqlfluff/migracion.json 2>&1
+
+                    RESULTADO_MIGRACION=$?
+
+                    echo "Analizando estructura de la base de datos..."
+
+                    docker run --rm \
+                      -v jenkins_home:/jenkins:ro \
+                      sqlfluff/sqlfluff:latest \
+                      lint --dialect mysql --format json \
+                      /jenkins/workspace/Prueba-SchemaSpy/database/schema/dbgestor-estructura.sql \
+                      > auditoria/sqlfluff/estructura.json 2>&1
+
+                    RESULTADO_ESTRUCTURA=$?
+
+                    echo "=================================="
+                    echo "RESULTADOS SQLFLUFF"
+                    echo "=================================="
+
+                    echo "Migracion:"
+                    cat auditoria/sqlfluff/migracion.json
+
+                    echo "Estructura:"
+                    cat auditoria/sqlfluff/estructura.json
+
+                    echo "Codigo migracion: $RESULTADO_MIGRACION"
+                    echo "Codigo estructura: $RESULTADO_ESTRUCTURA"
+
+                    if [ "$RESULTADO_MIGRACION" -eq 2 ] || [ "$RESULTADO_ESTRUCTURA" -eq 2 ]; then
+                        echo "Error de ejecucion de SQLFluff."
+                        exit 1
+                    fi
+
+                    echo "Analisis SQLFluff finalizado."
+                    exit 0
+                '''
+            }
+        }
+
+        stage('Auditoria de estructura con SchemaSpy') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'mariadb-root-password',
+                        variable: 'DB_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "=================================="
+                        echo "AUDITORIA DE ESTRUCTURA CON SCHEMASPY"
+                        echo "=================================="
+
+                        docker run --rm \
+                          --network calidad-red \
+                          -v jenkins_home:/var/jenkins_home \
+                          --entrypoint java \
+                          schemaspy/schemaspy:latest \
+                          -jar /usr/local/lib/schemaspy/schemaspy-app.jar \
+                          -t mariadb \
+                          -dp /var/jenkins_home/.m2/repository/org/mariadb/jdbc/mariadb-java-client/3.5.6/mariadb-java-client-3.5.6.jar \
+                          -driver org.mariadb.jdbc.Driver \
+                          -host dbgestor-mariadb \
+                          -port 3306 \
+                          -db dbgestor \
+                          -u root \
+                          -p "$DB_PASSWORD" \
+                          -s dbgestor \
+                          -o /var/jenkins_home/workspace/Prueba-SchemaSpy/reporte
+                    '''
+                }
+            }
+        }
+
+        stage('Diagnostico del servidor con Percona') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'mariadb-root-password',
+                        variable: 'DB_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "=================================="
+                        echo "DIAGNOSTICO CON PERCONA TOOLKIT"
+                        echo "=================================="
+
+                        docker run --rm \
+                          --network calidad-red \
+                          -e MYSQL_PWD="$DB_PASSWORD" \
+                          --entrypoint pt-mysql-summary \
+                          percona/percona-toolkit:3.7.2 \
+                          --host dbgestor-mariadb \
+                          --port 3306 \
+                          --user root \
+                          > auditoria/percona/resumen-servidor.txt
+
+                        echo "Diagnostico generado:"
+                        cat auditoria/percona/resumen-servidor.txt
+                    '''
+                }
+            }
+        }
+
+        stage('Verificar reportes') {
+            steps {
+                sh '''
+                    echo "=================================="
+                    echo "VERIFICANDO REPORTES"
+                    echo "=================================="
+
+                    test -f reporte/index.html
+                    test -s auditoria/percona/resumen-servidor.txt
+                    test -s auditoria/sqlfluff/migracion.json
+                    test -s auditoria/sqlfluff/estructura.json
+
+                    echo "Todos los reportes fueron generados."
+
+                    echo "Reporte SchemaSpy:"
+                    ls -lh reporte/
+
+                    echo "Reporte Percona:"
+                    ls -lh auditoria/percona/
+
+                    echo "Reporte SQLFluff:"
+                    ls -lh auditoria/sqlfluff/
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts(
+                artifacts: 'reporte/**,auditoria/percona/**,auditoria/sqlfluff/**',
+                allowEmptyArchive: true,
+                fingerprint: true
+            )
+        }
+
+        success {
+            echo 'Auditoria de base de datos finalizada correctamente.'
+        }
+
+        failure {
+            echo 'La auditoria fallo. Revisa la consola de Jenkins.'
+        }
+    }
+}
