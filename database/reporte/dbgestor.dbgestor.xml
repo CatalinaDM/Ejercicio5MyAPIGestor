@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="dbgestor" schema="dbgestor" type="MariaDB - 13.0.2-MariaDB-ubu2604">
+   <tables>
+      <table catalog="dbgestor" name="asignaciones" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id_asignacion" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="1" name="fecha_asignacion" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="2" name="id_tarea" nullable="true" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="dbgestor" column="id_tarea" foreignKey="fk_asignaciones_tareas" implied="false" onDeleteCascade="false" table="tareas"/>
+         </column>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="3" name="id_usuario" nullable="true" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="dbgestor" column="id_usuario" foreignKey="fk_asignaciones_usuario" implied="false" onDeleteCascade="false" table="usuario"/>
+         </column>
+         <primaryKey column="id_asignacion" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id_asignacion"/>
+         </index>
+         <index name="fk_asignaciones_tareas" unique="false">
+            <column ascending="true" name="id_tarea"/>
+         </index>
+         <index name="fk_asignaciones_usuario" unique="false">
+            <column ascending="true" name="id_usuario"/>
+         </index>
+      </table>
+      <table catalog="dbgestor" name="comentarios" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id_comentario" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="1" name="fecha_hora" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="2" name="id_tarea" nullable="true" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="dbgestor" column="id_tarea" foreignKey="fk_comentarios_tareas" implied="false" onDeleteCascade="false" table="tareas"/>
+         </column>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="3" name="id_usuario" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="4" name="texto_comentario" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="id_comentario" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id_comentario"/>
+         </index>
+         <index name="fk_comentarios_tareas" unique="false">
+            <column ascending="true" name="id_tarea"/>
+         </index>
+      </table>
+      <table catalog="dbgestor" name="proyectos" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id_proyecto" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <child catalog="dbgestor" column="id_proyecto" foreignKey="fk_tareas_proyectos" implied="false" onDeleteCascade="false" table="tareas"/>
+         </column>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="1" name="descripcion" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="2" name="estado_proyecto" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="3" name="fecha_finalizacion" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="4" name="fecha_inicio" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="5" name="fondo" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="6" name="nombre" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="id_proyecto" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id_proyecto"/>
+         </index>
+      </table>
+      <table catalog="dbgestor" name="tareas" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id_tarea" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <child catalog="dbgestor" column="id_tarea" foreignKey="fk_asignaciones_tareas" implied="false" onDeleteCascade="false" table="asignaciones"/>
+            <child catalog="dbgestor" column="id_tarea" foreignKey="fk_comentarios_tareas" implied="false" onDeleteCascade="false" table="comentarios"/>
+         </column>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="1" name="descripcion" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="2" name="estado" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="3" name="fecha_vencimiento" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="4" name="id_proyecto" nullable="true" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="dbgestor" column="id_proyecto" foreignKey="fk_tareas_proyectos" implied="false" onDeleteCascade="false" table="proyectos"/>
+         </column>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="5" name="lista" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="6" name="nombre" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="id_tarea" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id_tarea"/>
+         </index>
+         <index name="fk_tareas_proyectos" unique="false">
+            <column ascending="true" name="id_proyecto"/>
+         </index>
+      </table>
+      <table catalog="dbgestor" name="usuario" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id_usuario" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <child catalog="dbgestor" column="id_usuario" foreignKey="fk_asignaciones_usuario" implied="false" onDeleteCascade="false" table="asignaciones"/>
+         </column>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="1" name="contrasena" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="2" name="correo_electronico" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="3" name="imagen_usuario" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="4" name="nombre" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="NULL" digits="0" id="5" name="rol" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="id_usuario" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id_usuario"/>
+         </index>
+      </table>
+   </tables>
+</database>

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,18 +13,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.cbtis.gestor.service.IntegridadService;
 
+import com.mx.cbtis.gestor.dto.AsignacionDto;
 import com.mx.cbtis.gestor.modelo.Asignaciones;
 import com.mx.cbtis.gestor.modelo.Tareas;
 import com.mx.cbtis.gestor.repository.AsignacionesRepository;
 
 @RestController
 public class AsignacionesController {
-	
-	@Autowired
-	IntegridadService integridad;
-	
-	@Autowired
-	AsignacionesRepository asignacionestable;
+	private final IntegridadService integridad;
+	private final AsignacionesRepository asignacionestable;
+
+	public AsignacionesController(IntegridadService integridad, AsignacionesRepository asignacionestable) {
+		this.integridad = integridad;
+		this.asignacionestable = asignacionestable;
+	}
+
 	
 	@GetMapping("/buscarAsignacion")
 	public Asignaciones getAsignacion(@RequestParam int id) {
@@ -40,14 +42,14 @@ public class AsignacionesController {
 	}
 	
 	@PostMapping("/addAsignacion")
-	public int addAsignacion(@RequestBody Asignaciones asignacion) {
+	public int addAsignacion(@RequestBody AsignacionDto asignacion) {
 		
 		int flag = 0;
-		if(!asignacion.equals(null)) {
+		if(asignacion != null) {
 			
-			integridad.validarUsuario(asignacion.getId_usuario());
-			integridad.validarTarea(asignacion.getId_tarea());
-			asignacionestable.save(asignacion);
+			integridad.validarUsuario(asignacion.id_usuario());
+			integridad.validarTarea(asignacion.id_tarea());
+			asignacionestable.save(asignacion.toEntity());
 			flag = 1;
 		}
 		
@@ -55,13 +57,13 @@ public class AsignacionesController {
 	}
 	
 	@PostMapping("/updateAsignacion")
-	public int updateAsignacion(@RequestBody Asignaciones asignacion) {
+	public int updateAsignacion(@RequestBody AsignacionDto asignacion) {
 		
 		int flag = 0;
-		if(!asignacion.equals(null)) {
-			integridad.validarUsuario(asignacion.getId_usuario());
-			integridad.validarTarea(asignacion.getId_tarea());
-			asignacionestable.save(asignacion);
+		if(asignacion != null) {
+			integridad.validarUsuario(asignacion.id_usuario());
+			integridad.validarTarea(asignacion.id_tarea());
+			asignacionestable.save(asignacion.toEntity());
 			flag = 1;
 		}
 		
@@ -69,11 +71,11 @@ public class AsignacionesController {
 	}
 	
 	@DeleteMapping("/deleteAsignacion")
-	public int deleteAsignacion(@RequestBody Asignaciones asignacion) {
+	public int deleteAsignacion(@RequestBody AsignacionDto asignacion) {
 		
 		int flag = 0;
-		if(!asignacion.equals(null)) {
-			asignacionestable.delete(asignacion);
+		if(asignacion != null) {
+			asignacionestable.delete(asignacion.toEntity());
 			flag = 1;
 		}
 		

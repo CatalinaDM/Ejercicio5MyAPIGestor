@@ -1,0 +1,6 @@
+=========================================
+RESUMEN DE HALLAZGOS - BACKEND
+=========================================
+Total de hallazgos: 0
+
+No se encontraron vulnerabilidades en el codigo. ¡Excelente!
