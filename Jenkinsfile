@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'test', url: 'https://github.com/CatalinaDM/Ejercicio5MyAPIGestor.git'
+                checkout scm
             }
         }
         stage('Version') {
