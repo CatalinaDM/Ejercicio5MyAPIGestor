@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-11-24 17:38:20",
+  "target": "https://ejercicio5myapigestor-production.up.railway.app",
+  "concurrent_users": 10,
+  "total_requests": 120,
+  "total_time_seconds": 11.340958999993745,
+  "throughput_req_per_sec": 10.581115759263938,
+  "error_rate_percent": 0.0,
+  "latency_min_ms": 382.79800000600517,
+  "latency_avg_ms": 901.2351674988167,
+  "latency_p50_ms": 725.6465500031481,
+  "latency_p90_ms": 1421.232739991684,
+  "latency_p95_ms": 2240.9417000046233,
+  "latency_p99_ms": 2740.4744850075804,
+  "latency_max_ms": 2798.0569999926956,
+  "p95_threshold_met": false,
+  "status": "PASSED"
+}

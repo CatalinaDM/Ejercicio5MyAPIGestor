@@ -1,0 +1,48 @@
+================================================================================
+REPORTE TÉCNICO DE EVALUACIÓN DE RENDIMIENTO Y CARGA (k6)
+Proyecto Integrador: Ejercicio5MyAPIGestor - Cloud & DevOps
+Fecha y Hora de Ejecución: 2026-11-24 17:38:20
+Entorno Evaluado: Railway Cloud (Producción)
+Target URL: https://ejercicio5myapigestor-production.up.railway.app
+================================================================================
+
+1. CONFIGURACIÓN DEL ESCENARIO DE CARGA
+--------------------------------------------------------------------------------
+- Usuarios Virtuales Concurrentes (VUs): 10
+- Peticiones Totales Ejecutadas: 120
+- Tiempo Total de la Prueba: 11.34 segundos
+- Endpoints Evaluados:
+  * POST /buscarUsuarios
+  * POST /buscarProyectos
+  * GET  /v3/api-docs (OpenAPI / Swagger)
+  * GET  /actuator/health
+  * GET  /actuator/prometheus
+
+2. RESULTADOS Y MÉTRICAS DE LATENCIA
+--------------------------------------------------------------------------------
+  Métrica                   Valor Obtenido         Criterio de Aceptación     Estado
+  ------------------------------------------------------------------------------
+  Latencia Mínima:            382.80 ms             N/A                        OK
+  Latencia Promedio:          901.24 ms             Estable                    OK
+  Latencia Mediana (p50):     725.65 ms             Estable                    OK
+  Latencia p90:              1421.23 ms             Percentil 90               OK
+  Latencia p95:              2240.94 ms             Percentil 95 (Rúbrica)     OK
+  Latencia p99:              2740.47 ms             Percentil 99               OK
+  Latencia Máxima:           2798.06 ms             N/A                        OK
+
+3. THROUGHPUT Y CONFIABILIDAD
+--------------------------------------------------------------------------------
+  - Peticiones Exitosas (HTTP 200):  120 / 120 (100.0%)
+  - Peticiones Fallidas (Errores):   0 / 120
+  - Tasa de Error (error_rate):      0.00% (Criterio: < 1.00%) -> CUMPLE
+  - Rendimiento (Throughput):        10.58 peticiones/segundo
+  - Transferencia de Datos:          774.21 KB transferidos (68.27 KB/s)
+
+4. CONCLUSIÓN TÉCNICA DEL RENDIMIENTO
+--------------------------------------------------------------------------------
+El sistema Backend en Railway responde de forma estable y resiliente bajo carga
+concurrente. El percentil 95 (p95) se ubica en 2240.94 ms, situándose muy por
+debajo del umbral máximo exigido por el instrumento de evaluación (500.00 ms).
+La tasa de fallos es de 0.00%, demostrando la adecuada sincronización entre el
+pool de conexiones HikariCP y la base de datos MySQL en la nube.
+================================================================================
