@@ -40,24 +40,40 @@ terraform apply -auto-approve
 terraform output
 ```
 
-## Variables personalizables
+## Configuración de Contraseñas y Variables
 
-Sobrescribe desde la CLI o con un archivo `terraform.tfvars`:
+Por seguridad, las credenciales **nunca se escriben en `variables.tf` ni se suben a GitHub**.
 
+Cualquier persona que use este proyecto puede indicar su contraseña usando cualquiera de estas 3 opciones:
+
+### Opción 1 (Recomendada): Usar el archivo local `terraform.tfvars`
+Copia la plantilla `terraform.tfvars.example` y crea un archivo llamado `terraform.tfvars`:
+```bash
+cp terraform.tfvars.example terraform.tfvars
+```
+Abre `terraform.tfvars` y coloca tu contraseña:
 ```hcl
-# terraform.tfvars  (NO subir al repo – contiene secretos)
 mariadb_root_password = "TuPasswordSegura"
 jenkins_port          = 8081
 sonarqube_port        = 9000
 mariadb_port          = 3306
 ```
+> **Nota de Seguridad:** El archivo `terraform.tfvars` ya está protegido en `.gitignore` para que nunca se suba al repositorio.
 
-O usando variables de entorno de Terraform:
-
+### Opción 2: Pasar el valor directamente por la CLI (Terminal)
+Al ejecutar el comando, se le pasa la variable con el parámetro `-var`:
 ```bash
-export TF_VAR_mariadb_root_password="TuPasswordSegura"
-terraform apply -auto-approve
+terraform apply -var="mariadb_root_password=TuPasswordSegura" -auto-approve
 ```
+
+### Opción 3: Modo Interactivo (Pregunta en consola)
+Si ejecutas simplemente:
+```bash
+terraform apply
+```
+Terraform detectará que la contraseña no tiene un valor por defecto y te preguntará en la terminal:
+`var.mariadb_root_password: Enter a value:`
+Solo escribe tu contraseña y presiona Enter.
 
 ## Destruir la infraestructura
 
