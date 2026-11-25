@@ -41,8 +41,10 @@ export const options = {
 // ── Escenario principal ──────────────────────────────────────────────────────
 export default function () {
 
-  group('GET /buscarUsuarios', () => {
-    const res = http.get(`${BASE_URL}/buscarUsuarios`);
+  group('POST /buscarUsuarios', () => {
+    const payload = JSON.stringify({});
+    const params  = { headers: { 'Content-Type': 'application/json' } };
+    const res = http.post(`${BASE_URL}/buscarUsuarios`, payload, params);
     const ok = check(res, {
       'status 200': (r) => r.status === 200,
       'body no vacío': (r) => r.body && r.body.length > 0,
