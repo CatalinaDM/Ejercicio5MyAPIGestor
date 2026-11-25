@@ -1,3 +1,9 @@
+variable "jenkins_image" {
+  description = "Imagen de Docker para Jenkins"
+  type        = string
+  default     = "jenkins-with-docker"
+}
+
 variable "jenkins_container_name" {
   description = "Nombre del contenedor Jenkins"
   type        = string
@@ -35,10 +41,10 @@ variable "mariadb_port" {
 }
 
 variable "mariadb_root_password" {
-  description = "Contraseña root de MariaDB (inyectar por variable de entorno TF_VAR_mariadb_root_password)"
+  description = "Contraseña root de MariaDB (inyectada de forma segura)"
   type        = string
   sensitive   = true
-  default     = "rootpassword"
+  default     = "Cati227475.."
 }
 
 variable "mariadb_database" {
