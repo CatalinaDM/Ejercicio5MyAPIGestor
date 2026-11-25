@@ -1,0 +1,16 @@
+# ============================================================
+# PLANTILLA DE VARIABLES LOCALES (terraform.tfvars.example)
+# Copia este archivo con el nombre 'terraform.tfvars' y define tus valores.
+# El archivo 'terraform.tfvars' está en .gitignore y NUNCA se sube a GitHub.
+# ============================================================
+
+# Contraseña del usuario root de MariaDB (OBLIGATORIA)
+mariadb_root_password = "PonAquiTuContrasenaSegura"
+
+# Nombre de la base de datos a crear automáticamente
+mariadb_database      = "dbgestor"
+
+# Puertos expuestos en el Host (puedes cambiarlos si tienes conflicto de puertos)
+jenkins_port          = 8081
+sonarqube_port        = 9000
+mariadb_port          = 3306
