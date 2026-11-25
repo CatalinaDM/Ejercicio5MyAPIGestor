@@ -3,3 +3,6 @@
 *.log
 .idea/
 .vscode/
+*.exe
+.terraform/
+*.tfstate*
