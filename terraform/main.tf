@@ -17,8 +17,8 @@ terraform {
 provider "docker" {}
 
 # ---- Red interna compartida --------------------------------
-resource "docker_network" "devops_net" {
-  name = "devops-net"
+resource "docker_network" "calidad_net" {
+  name = "calidad-red"
 }
 
 # ---- Volúmenes persistentes --------------------------------
@@ -86,7 +86,7 @@ resource "docker_container" "jenkins" {
   }
 
   networks_advanced {
-    name = docker_network.devops_net.name
+    name = docker_network.calidad_net.name
   }
 }
 
@@ -120,7 +120,7 @@ resource "docker_container" "sonarqube" {
   ]
 
   networks_advanced {
-    name = docker_network.devops_net.name
+    name = docker_network.calidad_net.name
   }
 }
 
@@ -147,6 +147,6 @@ resource "docker_container" "mariadb" {
   ]
 
   networks_advanced {
-    name = docker_network.devops_net.name
+    name = docker_network.calidad_net.name
   }
 }
