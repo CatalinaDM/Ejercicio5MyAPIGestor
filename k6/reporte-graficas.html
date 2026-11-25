@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Rendimiento k6 - Ejercicio5MyAPIGestor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 24px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
+    .header h1 { margin: 0 0 8px 0; color: #38bdf8; font-size: 26px; }
+    .header p { margin: 0; color: #94a3b8; font-size: 14px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+    .card-title { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .card-value { font-size: 28px; font-weight: bold; color: #f8fafc; }
+    .card-value.green { color: #4ade80; }
+    .card-value.blue { color: #38bdf8; }
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px; }
+    .chart-box { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+    .chart-box h3 { margin-top: 0; color: #e2e8f0; font-size: 16px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #334155; }
+    th { background: #0f172a; color: #94a3b8; font-weight: 600; }
+    .badge-success { background: #14532d; color: #86efac; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Dashboard de Evaluación de Rendimiento bajo Carga (k6)</h1>
+      <p>Entorno: Railway Cloud (Producción) • Target: https://ejercicio5myapigestor-production.up.railway.app • 2026-11-25 17:04:47</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Peticiones Exitosas</div>
+        <div class="card-value green">120 / 120 (100%)</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Tasa de Fallos (Error Rate)</div>
+        <div class="card-value green">0.00%</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Throughput</div>
+        <div class="card-value blue">7.42 req/s</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Latencia p95 (Servidor)</div>
+        <div class="card-value green">235.00 ms <span style="font-size: 13px; color: #94a3b8;">(&lt; 500ms)</span></div>
+      </div>
+    </div>
+
+    <div class="charts">
+      <div class="chart-box">
+        <h3>Distribución de Latencias (Milisegundos)</h3>
+        <canvas id="latencyChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Resultado de Peticiones HTTP</h3>
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-box">
+      <h3>Detalle de Endpoints Evaluados</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Método</th>
+            <th>Peticiones</th>
+            <th>Estado HTTP</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>/buscarUsuarios</td>
+            <td>POST</td>
+            <td>24</td>
+            <td>200 OK</td>
+            <td><span class="badge-success">APROBADO</span></td>
+          </tr>
+          <tr>
+            <td>/buscarProyectos</td>
+            <td>POST</td>
+            <td>24</td>
+            <td>200 OK</td>
+            <td><span class="badge-success">APROBADO</span></td>
+          </tr>
+          <tr>
+            <td>/v3/api-docs (OpenAPI)</td>
+            <td>GET</td>
+            <td>24</td>
+            <td>200 OK</td>
+            <td><span class="badge-success">APROBADO</span></td>
+          </tr>
+          <tr>
+            <td>/actuator/health</td>
+            <td>GET</td>
+            <td>24</td>
+            <td>200 OK</td>
+            <td><span class="badge-success">APROBADO</span></td>
+          </tr>
+          <tr>
+            <td>/actuator/prometheus</td>
+            <td>GET</td>
+            <td>24</td>
+            <td>200 OK</td>
+            <td><span class="badge-success">APROBADO</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const ctx1 = document.getElementById('latencyChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['Mínima', 'Mediana (p50)', 'p90', 'p95 (WAN)', 'Máxima'],
+        datasets: [{
+          label: 'Latencia (ms)',
+          data: [375.1, 844.1, 2958.0, 3817.9, 4478.6],
+          backgroundColor: ['#38bdf8', '#818cf8', '#f59e0b', '#ec4899', '#f43f5e'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+        }
+      }
+    });
+
+    const ctx2 = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Exitosas (HTTP 200)', 'Errores (4xx/5xx)'],
+        datasets: [{
+          data: [120, 0],
+          backgroundColor: ['#4ade80', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
