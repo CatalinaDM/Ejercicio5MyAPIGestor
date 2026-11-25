@@ -23,28 +23,28 @@ resource "docker_network" "calidad_net" {
 
 # ---- Volúmenes persistentes --------------------------------
 resource "docker_volume" "jenkins_home" {
-  name = "jenkins-home"
+  name = "jenkins_home"
 }
 
 resource "docker_volume" "sonarqube_data" {
-  name = "sonarqube-data"
+  name = "sonarqube_data"
 }
 
 resource "docker_volume" "sonarqube_logs" {
-  name = "sonarqube-logs"
+  name = "sonarqube_logs"
 }
 
 resource "docker_volume" "sonarqube_extensions" {
-  name = "sonarqube-extensions"
+  name = "sonarqube_extensions"
 }
 
 resource "docker_volume" "mariadb_data" {
-  name = "mariadb-data"
+  name = "dbgestor_data"
 }
 
 # ---- Imágenes ----------------------------------------------
 resource "docker_image" "jenkins" {
-  name         = "jenkins/jenkins:lts-jdk21"
+  name         = var.jenkins_image
   keep_locally = true
 }
 
@@ -54,7 +54,7 @@ resource "docker_image" "sonarqube" {
 }
 
 resource "docker_image" "mariadb" {
-  name         = "mariadb:11"
+  name         = "mariadb:latest"
   keep_locally = true
 }
 
