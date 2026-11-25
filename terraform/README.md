@@ -13,10 +13,10 @@ Aprovisiona el entorno CI local con **Jenkins**, **SonarQube** y **MariaDB** usa
 
 ```
 terraform/
-├── main.tf        # Recursos Docker (contenedores, volúmenes, red)
-├── variables.tf   # Variables con valores por defecto
+├── main.tf        # Recursos Docker (contenedores, volúmenes, red calidad-red)
+├── variables.tf   # Variables con valores por defecto sincronizados
 ├── outputs.tf     # URLs de acceso tras el apply
-└── README.md      # Este archivo
+└── README.md      # Guía de aprovisionamiento
 ```
 
 ## Uso rápido
@@ -27,9 +27,11 @@ cd terraform
 
 # 2. Inicializar provider
 terraform init
+# (O si usas el ejecutable local: .\terraform.exe init)
 
 # 3. Ver qué se va a crear
 terraform plan
+# (Verifica los 12 recursos: red calidad-red, volúmenes y contenedores)
 
 # 4. Crear la infraestructura
 terraform apply -auto-approve
@@ -44,15 +46,16 @@ Sobrescribe desde la CLI o con un archivo `terraform.tfvars`:
 
 ```hcl
 # terraform.tfvars  (NO subir al repo – contiene secretos)
-mariadb_root_password = "MiPasswordSegura"
+mariadb_root_password = "TuPasswordSegura"
 jenkins_port          = 8081
 sonarqube_port        = 9000
+mariadb_port          = 3306
 ```
 
-O usando variables de entorno:
+O usando variables de entorno de Terraform:
 
 ```bash
-export TF_VAR_mariadb_root_password="MiPasswordSegura"
+export TF_VAR_mariadb_root_password="TuPasswordSegura"
 terraform apply -auto-approve
 ```
 
@@ -62,14 +65,16 @@ terraform apply -auto-approve
 terraform destroy -auto-approve
 ```
 
-> **Nota:** Los volúmenes Docker persisten datos entre `destroy`/`apply`. Para borrarlos también: `docker volume prune`.
+> **Nota:** Los volúmenes Docker (`jenkins_home`, `dbgestor_data`, `sonarqube_*`) persisten los datos de las bases de datos y configuraciones entre comandos `destroy` y `apply`.
 
-## Lo que crea
+## Recursos aprovisionados en Docker
 
-| Recurso | Descripción |
-|---|---|
-| `docker_network.devops_net` | Red interna `devops-net` |
-| `docker_container.jenkins` | Jenkins LTS en puerto 8081 |
-| `docker_container.sonarqube` | SonarQube Community en puerto 9000 |
-| `docker_container.mariadb` | MariaDB 11 en puerto 3306 |
-| Volúmenes | `jenkins-home`, `sonarqube-data/logs/extensions`, `mariadb-data` |
+| Recurso | Tipo | Nombre en Docker | Descripción |
+|---|---|---|---|
+| `docker_network.calidad_net` | Network | `calidad-red` | Red interna puente (Bridge) para intercomunicación segura entre contenedores |
+| `docker_volume.jenkins_home` | Volume | `jenkins_home` | Persistencia de jobs, pipelines, plugins y credenciales de Jenkins |
+| `docker_volume.mariadb_data` | Volume | `dbgestor_data` | Persistencia de datos relacionales de MariaDB/MySQL |
+| `docker_volume.sonarqube_*` | Volumes | `sonarqube_data`, `logs`, `extensions` | Persistencia de perfiles de calidad y análisis de SonarQube |
+| `docker_container.jenkins` | Container | `jenkins` | Servidor CI/CD en puerto 8081 con acceso a `/var/run/docker.sock` |
+| `docker_container.sonarqube` | Container | `sonarqube` | Servidor de inspección de código en puerto 9000 |
+| `docker_container.mariadb` | Container | `dbgestor-mariadb` | Servidor de base de datos relacional en puerto 3306 |

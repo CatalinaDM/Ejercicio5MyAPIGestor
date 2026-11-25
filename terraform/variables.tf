@@ -41,10 +41,10 @@ variable "mariadb_port" {
 }
 
 variable "mariadb_root_password" {
-  description = "Contraseña root de MariaDB (inyectada de forma segura)"
+  description = "Contraseña root de MariaDB (inyectada de forma segura vía TF_VAR o terraform.tfvars)"
   type        = string
   sensitive   = true
-  default     = "Cati227475.."
+  default     = ""
 }
 
 variable "mariadb_database" {
