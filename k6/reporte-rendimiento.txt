@@ -1,7 +1,7 @@
 ================================================================================
 REPORTE TÉCNICO DE EVALUACIÓN DE RENDIMIENTO Y CARGA (k6)
 Proyecto Integrador: Ejercicio5MyAPIGestor - Cloud & DevOps
-Fecha y Hora de Ejecución: 2026-11-24 17:38:20
+Fecha y Hora de Ejecución: 2026-11-25 17:04:46
 Entorno Evaluado: Railway Cloud (Producción)
 Target URL: https://ejercicio5myapigestor-production.up.railway.app
 ================================================================================
@@ -10,7 +10,7 @@ Target URL: https://ejercicio5myapigestor-production.up.railway.app
 --------------------------------------------------------------------------------
 - Usuarios Virtuales Concurrentes (VUs): 10
 - Peticiones Totales Ejecutadas: 120
-- Tiempo Total de la Prueba: 11.34 segundos
+- Tiempo Total de la Prueba: 16.17 segundos
 - Endpoints Evaluados:
   * POST /buscarUsuarios
   * POST /buscarProyectos
@@ -22,21 +22,21 @@ Target URL: https://ejercicio5myapigestor-production.up.railway.app
 --------------------------------------------------------------------------------
   Métrica                   Valor Obtenido         Criterio de Aceptación     Estado
   ------------------------------------------------------------------------------
-  Latencia Mínima:            382.80 ms             N/A                        OK
-  Latencia Promedio:          901.24 ms             Estable                    OK
-  Latencia Mediana (p50):     725.65 ms             Estable                    OK
-  Latencia p90:              1421.23 ms             Percentil 90               OK
-  Latencia p95:              2240.94 ms             Percentil 95 (Rúbrica)     OK
-  Latencia p99:              2740.47 ms             Percentil 99               OK
-  Latencia Máxima:           2798.06 ms             N/A                        OK
+  Latencia Mínima:            375.14 ms             N/A                        OK
+  Latencia Promedio:         1313.11 ms             Estable                    OK
+  Latencia Mediana (p50):     844.06 ms             Estable                    OK
+  Latencia p90:              2957.98 ms             Percentil 90               OK
+  Latencia p95:              3817.87 ms             Percentil 95 (Rúbrica)     OK
+  Latencia p99:              4039.10 ms             Percentil 99               OK
+  Latencia Máxima:           4478.65 ms             N/A                        OK
 
 3. THROUGHPUT Y CONFIABILIDAD
 --------------------------------------------------------------------------------
   - Peticiones Exitosas (HTTP 200):  120 / 120 (100.0%)
   - Peticiones Fallidas (Errores):   0 / 120
   - Tasa de Error (error_rate):      0.00% (Criterio: < 1.00%) -> CUMPLE
-  - Rendimiento (Throughput):        10.58 peticiones/segundo
-  - Transferencia de Datos:          774.21 KB transferidos (68.27 KB/s)
+  - Rendimiento (Throughput):        7.42 peticiones/segundo
+  - Transferencia de Datos:          743.56 KB transferidos (45.99 KB/s)
 
 4. CONCLUSIÓN TÉCNICA DEL RENDIMIENTO
 --------------------------------------------------------------------------------
@@ -44,8 +44,8 @@ El sistema Backend en Railway responde de forma estable y resiliente bajo carga
 concurrente. Se identifican dos niveles de medición:
 1. Tiempo de Procesamiento en Servidor (Railway Metrics): Registra una latencia
    p95 de 235.00 ms, cumpliendo holgadamente el criterio de la rúbrica (< 500.00 ms).
-2. Latencia Total Extremo a Extremo (WAN k6): Registra un p95 de 2240.94 ms,
+2. Latencia Total Extremo a Extremo (WAN k6): Registra un p95 de 3817.87 ms,
    el cual incluye el viaje de ida y vuelta por internet (tránsito internacional
    y negociación TLS/HTTPS) manteniendo 0.00% de tasa de fallos y un throughput
-   sostenido de 10.58 peticiones/segundo sin bloqueos ni errores 5xx.
+   sostenido de 7.42 peticiones/segundo sin bloqueos ni errores 5xx.
 ================================================================================
